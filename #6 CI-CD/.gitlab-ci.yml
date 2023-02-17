@@ -1,0 +1,53 @@
+stages:
+  - build_test
+  - style_test
+  - functional_test
+  - deploy
+
+test_build:
+  stage: build_test
+  tags:
+    - build
+  script:
+    - make cat
+    - make grep
+  artifacts:
+    paths:
+      - sudo su
+      - "1"
+      - src/s21_cat
+      - src/s21_grep
+    expire_in: 30 days
+  after_script:
+    - bash src/telegram.sh
+
+test_style:
+  stage: style_test
+  tags:
+    - style
+  script:
+    - clang-format -n -style=google -Werror ./src/cat/*.c ./src/grep/*.c
+  after_script:
+    - bash src/telegram.sh
+
+test_functional:
+  stage: functional_test
+  tags:
+    - test
+  script:
+    - make test_cat
+    - make test_grep
+  needs: ["test_style", "test_build"]
+  after_script:
+    - bash src/telegram.sh
+
+deploy_cd:
+  stage: deploy
+  tags:
+    - deploy
+  script:
+    - pwd
+    - bash src/copy.sh
+  needs: ["test_build", "test_functional"]
+  after_script:
+    - bash src/telegram.sh
