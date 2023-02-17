@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /home/gitlab-runner/telegram.conf
 TIME=8
 URL="https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage"
 TEXT="Deploy status: $1%0A%0AProject:+$CI_PROJECT_NAME%0AJOB_STAGE:$CI_JOB_STAGE
