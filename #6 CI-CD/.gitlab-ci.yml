@@ -13,8 +13,6 @@ test_build:
     - make grep
   artifacts:
     paths:
-      - sudo su
-      - "1"
       - src/s21_cat
       - src/s21_grep
     expire_in: 30 days
