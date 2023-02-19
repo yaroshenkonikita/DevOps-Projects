@@ -44,7 +44,6 @@ deploy_cd:
   tags:
     - deploy
   script:
-    - pwd
     - bash src/copy.sh
   needs: ["test_build", "test_functional"]
   after_script:
