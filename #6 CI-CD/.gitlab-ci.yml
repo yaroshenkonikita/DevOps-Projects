@@ -13,8 +13,6 @@ test_build:
     - make grep
   artifacts:
     paths:
-      - sudo su
-      - "1"
       - src/s21_cat
       - src/s21_grep
     expire_in: 30 days
@@ -46,7 +44,6 @@ deploy_cd:
   tags:
     - deploy
   script:
-    - pwd
     - bash src/copy.sh
   needs: ["test_build", "test_functional"]
   after_script:
