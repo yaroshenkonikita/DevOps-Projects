@@ -48,22 +48,24 @@ do
     PATH_SCRIPT=$(compgen -d / | shuf -n1)
     cd $PATH_SCRIPT
 
+    TMP_FOLDER_LETTERS=$FOLDER_LETTERS
     # while
     COUNT_FOLDERS=$(( $RANDOM % 100 + 1 ))
 
     for (( i = 0; i < $COUNT_FOLDERS; i++ ))
     do
         # Создание папок
-        while [ -e $FOLDER_LETTERS"_"$DATE ]
+        while [ -e $TMP_FOLDER_LETTERS"_"$DATE ]
         do
             # если такие названия уже есть
-            FOLDER_LETTERS=${FOLDER_LETTERS:0:1}$FOLDER_LETTERS
+            TMP_FOLDER_LETTERS=${TMP_FOLDER_LETTERS:0:1}$TMP_FOLDER_LETTERS
         done
 
-        TMP_NAME_FOLDER=$FOLDER_LETTERS"_"$DATE
+        TMP_NAME_FOLDER=$TMP_FOLDER_LETTERS"_"$DATE
         mkdir $TMP_NAME_FOLDER
 
         echo "$PATH_SCRIPT/$TMP_NAME_FOLDER/" `date +%Y-%m-%d-%H-%M` >> $SOURCE_PATH/logs_file.log
+        echo "$PATH_SCRIPT/$TMP_NAME_FOLDER/" `date +%Y-%m-%d-%H-%M`
         TMP_NAME_FILE=$PATH_SCRIPT"/"$TMP_NAME_FOLDER"/"$FILE_LETTERS
 
         COUNT_FILES=$(( $RANDOM % 100 + 1))
@@ -81,6 +83,7 @@ do
             fallocate -l $SIZE_FILES"M" $TMP_NAME_FILE$EXTENSION_LETTERS 2> /dev/null
 
             echo "$TMP_NAME_FILE$EXTENSION_LETTERS" `date +%Y-%m-%d-%H-%M` "$SIZE_FILES""MB" >>  $SOURCE_PATH/logs_file.log
+            echo "$TMP_NAME_FILE$EXTENSION_LETTERS" `date +%Y-%m-%d-%H-%M` "$SIZE_FILES""MB"
             
             if [[ $(df / -BM | grep "/" | awk -F"M" '{ print $3 }') -le 1024 ]]; then
                 END_SEC=$(date +'%s%N')
@@ -89,10 +92,11 @@ do
                 echo "Script ran for $DIFF_SEC seconds" >> $SOURCE_PATH/logs_file.log
                 cd $SOURCE_PATH
                 exit 0
+            fi
 
             TMP_NAME_FILE=$TMP_NAME_FILE${TMP_NAME_FILE:${#TMP_NAME_FILE} - 1:1}
         done
 
-        FOLDER_LETTERS=$FOLDER_LETTERS${FOLDER_LETTERS:${#FOLDER_LETTERS} - 1:1}
+        TMP_FOLDER_LETTERS=$TMP_FOLDER_LETTERS${TMP_FOLDER_LETTERS:${#TMP_FOLDER_LETTERS} - 1:1}
     done
 done
