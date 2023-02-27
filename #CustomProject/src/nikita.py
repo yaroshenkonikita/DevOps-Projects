@@ -4,13 +4,13 @@ from selenium.webdriver.common.by import By
 import time, requests
 
 # ====================Variables====================
-LOGIN="login"
-PASSWORD="password"
-TARGETLINK="www.a.com"
+LOGIN=""
+PASSWORD=""
+TARGETLINK=""
 TARGETXPATH='//span[contains(text(), "Available")]'
-BOT_API="1:A"
-USER_TG_ID="1"
-MESSAGE="Available%20Target"
+BOT_API=""
+USER_TG_ID=""
+MESSAGE="I%20found%20it!"
 # =================================================
 
 chrome_options = webdriver.ChromeOptions()
@@ -19,6 +19,7 @@ chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--ignore-certificate-errors')
 chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
 
 driver = webdriver.Chrome(options=chrome_options)
 driver.get(TARGETLINK)
@@ -35,10 +36,12 @@ while True:
         drivertmp.refresh()
         time.sleep(2)
         url = drivertmp.current_url
+        if (url != TARGETLINK):
+            drivertmp.get(TARGETLINK)
         print("check - " + url)
         try:
             button = drivertmp.find_element(By.XPATH, TARGETXPATH)
-            requests.get('https://api.telegram.org/bot'BOT_API'/sendMessage?chat_id='USER_TG_ID'&text='MESSAGE)
+            requests.get('https://api.telegram.org/bot' + BOT_API + '/sendMessage?chat_id=' + USER_TG_ID + '&text=' + MESSAGE)
             # break
         except:
             print("Not found:", n)
