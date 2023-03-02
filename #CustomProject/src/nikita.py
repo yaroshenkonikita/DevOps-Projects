@@ -21,37 +21,27 @@ chrome_options.add_argument('--ignore-certificate-errors')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
-driver = webdriver.Chrome(options=chrome_options)
-driver.get(TARGETLINK)
-login = driver.find_element(By.CSS_SELECTOR, "input[name='username']").send_keys(LOGIN)
-password = driver.find_element(By.CSS_SELECTOR, "input[name='password']").send_keys(PASSWORD)
-
-driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
+browser = webdriver.Chrome(options=chrome_options)
 
 n = 1
 while True:
-    drivertmp = driver
     try:
-        drivertmp.refresh()
+        browser.refresh()
         time.sleep(2)
-        url = drivertmp.current_url
+        url = browser.current_url
         if (url != TARGETLINK):
-            drivertmp.get(TARGETLINK)
+            raise Exception("Session closed")
         print("check - " + url)
-        try:
-            button = drivertmp.find_element(By.XPATH, TARGETXPATH)
-            requests.get('https://api.telegram.org/bot' + BOT_API + '/sendMessage?chat_id=' + USER_TG_ID + '&text=' + MESSAGE)
-            # break
-        except:
-            print("Not found:", n)
-            n += 1
+    except:
+        browser.get(TARGETLINK)
+        login = browser.find_element(By.CSS_SELECTOR, "input[name='username']").send_keys(LOGIN)
+        password = browser.find_element(By.CSS_SELECTOR, "input[name='password']").send_keys(PASSWORD)
+        browser.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    try:
+        button = browser.find_element(By.XPATH, TARGETXPATH)
+        requests.get('https://api.telegram.org/bot' + BOT_API + '/sendMessage?chat_id=' + USER_TG_ID + '&text=' + MESSAGE)
+        # break
+    except:
+        print("Not found:", n)
+        n += 1
 
-    except Exception as e:
-        print("try refresh fail:", e)
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.get(TARGETLINK)
-        login = driver.find_element(By.CSS_SELECTOR, "input[name='username']").send_keys(LOGIN)
-        password = driver.find_element(By.CSS_SELECTOR, "input[name='password']").send_keys(PASSWORD)
-
-        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
